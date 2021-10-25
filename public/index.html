@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>React</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <style>
+      #heading {
+        margin: 20px;
+        font-family: sans-serif;
+      }
+      .colorizer {
+        margin: 20px;
+      }
+      .colorizer .colorSquare {
+        box-shadow: 0 0 15px 0 #555555;
+        width: 275px;
+        height: 275px;
+      }
+      .colorizer input {
+        padding: 10px;
+        font-size: 16px;
+        border: 2px solid #777777;
+      }
+      .colorizer button {
+        padding: 10px;
+        font-size: 16px;
+        border: 2px solid #777777;
+        background-color: #999999;
+        color: #ffffff;
+        margin: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 id="heading">
+      Палитра<span>: <span style="color: green;">green</span></span>
+    </h1>
+    <div id="container"></div>
+    <script type="text/babel">
+      class Colorizer extends React.Component {
+        constructor(props) {
+          super(props);
+
+          this.state = {
+            color: "",
+            bgColor: "white"
+          };
+
+          this.saveNewColor = this.saveNewColor.bind(this);
+          this.paintNewColor = this.paintNewColor.bind(this);
+        }
+
+        saveNewColor(e) {
+          this.setState({
+            color: e.target.value
+          });
+        }
+
+        paintNewColor(e) {
+          this.setState({
+            bgColor: this.state.color
+          });
+          e.preventDefault();
+        }
+
+        render() {
+          var squareStyle = {
+            backgroundColor: this.state.bgColor
+          };
+          return (
+            <div className="colorizer">
+              <div style={squareStyle} className="colorSquare"></div>
+
+              <form onSubmit={this.paintNewColor}>
+                <input
+                  onChange={this.saveNewColor}
+                  placeholder="Значение цвета"
+                />
+                <button type="submit">OK</button>
+              </form>
+
+              <ColorLabel color={this.state.bgColor} />
+            </div>
+          );
+        }
+      }
+
+      class ColorLabel extends React.Component {
+        render() {
+          var style = {
+            color: this.props.color == "white" ? "lightgray" : this.props.color
+          };
+          return ReactDOM.createPortal(
+            <span>
+              : <span style={style}>{this.props.color}</span>
+            </span>,
+            document.querySelector("#heading")
+          );
+        }
+      }
+
+      ReactDOM.render(<Colorizer />, document.querySelector("#container"));
+    </script>
+  </body>
+</html>
